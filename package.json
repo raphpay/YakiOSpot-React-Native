@@ -10,6 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-navigation/native": "^6.1.8",
+    "@react-navigation/stack": "^6.3.18",
     "react": "18.2.0",
     "react-native": "0.72.5"
   },
@@ -32,5 +34,10 @@
   },
   "engines": {
     "node": ">=16"
-  }
+  },
+  "description": "App to gather people around a spot",
+  "main": "App.tsx",
+  "repository": "https://github.com/raphpay/YakiOSpot-React-Native.git",
+  "author": "Raphaël Payet <raphpay.dev@gmail.com>",
+  "license": "MIT"
 }
