@@ -13,10 +13,12 @@ function SignUp() {
 
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
+  const [passwordConfirmation, onChangePasswordConfirmation] = useState("");
+  
+  const isFormValid = email !== "" && password !== "" && passwordConfirmation !== "" && password === passwordConfirmation;
 
   function signUp() {
-
-    if (email !== "" && password !== "") {
+    if (isFormValid) {
       auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
@@ -53,7 +55,15 @@ function SignUp() {
         value={password}
         placeholder="Password"
       />
-      <TouchableOpacity onPress={signUp} style={styles.loginButton}> 
+      <TextInput
+        style={styles.input}
+        onChangeText={onChangePasswordConfirmation}
+        value={passwordConfirmation}
+        placeholder="Password Confirmation"
+      />
+      <TouchableOpacity onPress={signUp}
+      style={isFormValid ? styles.loginButton : styles.loginButtonDisabled}
+      disabled={!isFormValid}> 
         <Text style={styles.loginButtonText}>Sign Up</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
@@ -82,6 +92,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10,
     backgroundColor: "blue",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loginButtonDisabled: {
+    height: 44,
+    width: "90%",
+    padding: 10,
+    borderWidth: 1,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: "gray",
     justifyContent: "center",
     alignItems: "center",
   },

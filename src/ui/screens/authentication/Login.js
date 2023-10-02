@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  View,
   useColorScheme,
 } from 'react-native';
 
@@ -42,6 +43,8 @@ function Login(props) {
     navigation.navigate("SignUp");
   }
 
+  const isFormValid = email !== "" && password !== "";
+
   return (
     <SafeAreaView style={[backgroundStyle, styles.container]}>
       <TextInput
@@ -60,12 +63,19 @@ function Login(props) {
         placeholder="Password"
         secureTextEntry={true}
       />
-      <TouchableOpacity onPress={login} style={styles.loginButton}> 
+      <TouchableOpacity
+        onPress={login}
+        style={isFormValid ? styles.loginButton : styles.loginButtonDisabled}
+        disabled={!isFormValid}
+      > 
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={goToSignUpScreen}>
-        <Text>Sign Up</Text>
-      </TouchableOpacity>
+      <View style={styles.noAccountText}>
+        <Text>Don't have an account?</Text>
+        <TouchableOpacity onPress={goToSignUpScreen} style={styles.signUpButton}>
+          <Text>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -111,8 +121,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  loginButtonDisabled: {
+    height: 44,
+    width: "90%",
+    padding: 10,
+    borderWidth: 1,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: "gray",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   loginButtonText: {
     color: "white",
+  },
+  noAccountText: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  signUpButton: {
+    paddingLeft: 5,
   }
 });
 
