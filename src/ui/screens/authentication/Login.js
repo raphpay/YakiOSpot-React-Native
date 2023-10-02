@@ -12,7 +12,9 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 
-function Login(): JSX.Element {
+function Login(props) {
+
+  const { navigation } = props;
 
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
@@ -24,6 +26,10 @@ function Login(): JSX.Element {
   };
 
   function login() {}
+
+  function goToSignUpScreen() {
+    navigation.navigate("SignUp");
+  }
 
   return (
     <SafeAreaView style={[backgroundStyle, styles.container]}>
@@ -41,6 +47,9 @@ function Login(): JSX.Element {
       />
       <TouchableOpacity onPress={login} style={styles.loginButton}> 
         <Text style={styles.loginButtonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={goToSignUpScreen}>
+        <Text>Sign Up</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
