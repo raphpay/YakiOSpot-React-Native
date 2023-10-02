@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -21,6 +22,7 @@ function Login(props) {
 
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -35,7 +37,31 @@ function Login(props) {
       console.log('User signed in!');
     })
     .catch(error => {
-      console.log(error);
+
+      switch (error.code) {
+        case 'auth/invalid-email':
+          setAlertMessage('The email address is invalid!');
+          break;
+        case 'auth/user-disabled':
+          setAlertMessage('The user is disabled!');
+          break;
+        case 'auth/user-not-found':
+          setAlertMessage('The user was not found!');
+          break;
+        case 'auth/wrong-password':
+          setAlertMessage('The password is incorrect!');
+          break;
+        case 'auth/too-many-requests':
+          setAlertMessage('Too many requests!');
+          break;
+        default:
+          setAlertMessage('An error occurred!');
+          break;
+      }
+
+      Alert.alert('Error during registration', alertMessage, [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
     });
   }
 

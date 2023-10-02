@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -14,8 +15,14 @@ function SignUp() {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [passwordConfirmation, onChangePasswordConfirmation] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
   
-  const isFormValid = email !== "" && password !== "" && passwordConfirmation !== "" && password === passwordConfirmation;
+  const isFormValid =
+    email !== "" &&
+    password !== "" &&
+    password.length >= 6 &&
+    passwordConfirmation !== "" &&
+    password === passwordConfirmation;
 
   function signUp() {
     if (isFormValid) {
@@ -26,14 +33,21 @@ function SignUp() {
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
-          console.log('That email address is already in use!');
+          setAlertMessage('That email address is already in use!');
         }
     
         if (error.code === 'auth/invalid-email') {
-          console.log('That email address is invalid!');
+          setAlertMessage('That email address is invalid!');
         }
-    
-        console.error(error);
+
+        if (error.code === 'auth/weak-password') {
+          setAlertMessage('Password should be at least 6 characters');
+        }
+
+        Alert.alert('Error during registration', alertMessage, [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+
       });
     }
   }
