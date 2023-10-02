@@ -8,6 +8,8 @@ import {
   useColorScheme,
 } from 'react-native';
 
+import auth from '@react-native-firebase/auth';
+
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
@@ -25,7 +27,16 @@ function Login(props) {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  function login() {}
+  function login() {
+    auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(() => {
+      console.log('User signed in!');
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
 
   function goToSignUpScreen() {
     navigation.navigate("SignUp");
@@ -38,12 +49,16 @@ function Login(props) {
         onChangeText={onChangeEmail}
         value={email}
         placeholder='Email'
+        autoCapitalize='none'
+        autoCorrect={false}
+        keyboardType='email-address'
       />
       <TextInput
         style={styles.input}
         onChangeText={onChangePassword}
         value={password}
         placeholder="Password"
+        secureTextEntry={true}
       />
       <TouchableOpacity onPress={login} style={styles.loginButton}> 
         <Text style={styles.loginButtonText}>Login</Text>
