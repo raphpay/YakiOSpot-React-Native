@@ -13,6 +13,7 @@ import {
 import AuthService from '../../../business-logic/authService';
 
 import Colors from '../../assets/colors/Colors';
+import BackgroundImage from '../../components/BackgroundImage';
 
 function Login(props) {
 
@@ -77,28 +78,13 @@ function Login(props) {
   }
 
   return (
-    <View style={styles.backgroundContainer}>
-      <Image 
-        source={require('../../assets/images/background/login-background.png')}
-        resizeMode={'cover'}
-        style={styles.backgroundImage}
-      />
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/images/logo/Horizontal-Logo.png')}
-          resizeMode={'cover'}
-          style={styles.logo}
-        />
-      </View>
-      {form()}
-    </View>
+    <BackgroundImage
+      content={form()}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundContainer: {
-    flex: 1,
-  },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -132,22 +118,6 @@ const styles = StyleSheet.create({
   },
   signUpButton: {
     paddingLeft: 5,
-  },
-  backgroundImage: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: -1,
-    opacity: 0.45,
-  },
-  logoContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 50,
-  },
-  logo: {
-    height: 54,
-    width: 200,
   },
   signUpButtonText: {
     fontWeight: "bold",
