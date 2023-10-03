@@ -10,7 +10,11 @@ import {
 
 import AuthService from '../../../business-logic/authService';
 
-function SignUp() {
+import BackgroundImage from '../../components/BackgroundImage';
+
+function SignUp(props) {
+
+  const { navigation } = props;
 
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
@@ -37,35 +41,46 @@ function SignUp() {
     }
   }
 
+  const form = () => {
+    return (
+      <KeyboardAvoidingView style={styles.container}>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeEmail}
+          value={email}
+          placeholder='Email'
+          autoCapitalize='none'
+          autoCorrect={false}
+          keyboardType='email-address'
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangePassword}
+          value={password}
+          placeholder="Password"
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangePasswordConfirmation}
+          value={passwordConfirmation}
+          placeholder="Password Confirmation"
+        />
+        <TouchableOpacity onPress={signUp}
+        style={isFormValid ? styles.loginButton : styles.loginButtonDisabled}
+        disabled={!isFormValid}> 
+          <Text style={styles.loginButtonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    )
+  }
+
   return (
-    <KeyboardAvoidingView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeEmail}
-        value={email}
-        placeholder='Email'
-        autoCapitalize='none'
-        autoCorrect={false}
-        keyboardType='email-address'
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangePassword}
-        value={password}
-        placeholder="Password"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangePasswordConfirmation}
-        value={passwordConfirmation}
-        placeholder="Password Confirmation"
-      />
-      <TouchableOpacity onPress={signUp}
-      style={isFormValid ? styles.loginButton : styles.loginButtonDisabled}
-      disabled={!isFormValid}> 
-        <Text style={styles.loginButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+    <BackgroundImage
+      image={require('../../assets/images/background/signUpBackground.png')}
+      content={form()}
+      showBackButton={true}
+      navigation={navigation}
+    />
   );
 }
 

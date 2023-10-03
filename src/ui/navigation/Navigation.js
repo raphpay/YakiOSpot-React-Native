@@ -44,6 +44,7 @@ function Navigation() {
               <Stack.Screen
                 name="SignUp"
                 component={SignUp}
+                options={{ headerShown: false }}
               />
             </>
           )
