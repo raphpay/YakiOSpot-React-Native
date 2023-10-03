@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   Alert,
+  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -39,57 +40,64 @@ function Login(props) {
 
   const isFormValid = email !== "" && password !== "";
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeEmail}
-        value={email}
-        placeholder='Email'
-        autoCapitalize='none'
-        autoCorrect={false}
-        keyboardType='email-address'
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangePassword}
-        value={password}
-        placeholder="Password"
-        secureTextEntry={true}
-      />
-      <TouchableOpacity
-        onPress={login}
-        style={{backgroundColor: isFormValid ? Colors.brownish : "gray", ...styles.loginButton}}
-        disabled={!isFormValid}
-      > 
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
-      <View style={styles.noAccountText}>
-        <Text>Don't have an account?</Text>
-        <TouchableOpacity onPress={goToSignUpScreen} style={styles.signUpButton}>
-          <Text>Sign Up</Text>
+  const form = () => {
+    return (
+      <SafeAreaView style={styles.container}>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeEmail}
+          value={email}
+          placeholder='Email'
+          autoCapitalize='none'
+          autoCorrect={false}
+          keyboardType='email-address'
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangePassword}
+          value={password}
+          placeholder="Password"
+          secureTextEntry={true}
+        />
+        <TouchableOpacity
+          onPress={login}
+          style={{backgroundColor: isFormValid ? Colors.brownish : "gray", ...styles.loginButton}}
+          disabled={!isFormValid}
+        > 
+          <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
+        <View style={styles.noAccountText}>
+          <Text>Don't have an account?</Text>
+          <TouchableOpacity onPress={goToSignUpScreen} style={styles.signUpButton}>
+            <Text style={styles.signUpButtonText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    )
+  }
+
+  return (
+    <View style={styles.backgroundContainer}>
+      <Image 
+        source={require('../../assets/images/background/login-background.png')}
+        resizeMode={'cover'}
+        style={styles.backgroundImage}
+      />
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../assets/images/logo/Horizontal-Logo.png')}
+          resizeMode={'cover'}
+          style={styles.logo}
+        />
       </View>
-    </SafeAreaView>
+      {form()}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  backgroundContainer: {
+    flex: 1,
   },
   container: {
     justifyContent: 'center',
@@ -112,17 +120,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: "center",
     alignItems: "center",
-  },
-  loginButtonDisabled: {
-    height: 44,
-    width: "90%",
-    padding: 10,
-    borderWidth: 1,
-    marginBottom: 10,
     borderRadius: 10,
-    backgroundColor: "gray",
-    justifyContent: "center",
-    alignItems: "center",
   },
   loginButtonText: {
     color: "white",
@@ -134,6 +132,25 @@ const styles = StyleSheet.create({
   },
   signUpButton: {
     paddingLeft: 5,
+  },
+  backgroundImage: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    zIndex: -1,
+    opacity: 0.45,
+  },
+  logoContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 50,
+  },
+  logo: {
+    height: 54,
+    width: 200,
+  },
+  signUpButtonText: {
+    fontWeight: "bold",
   }
 });
 
