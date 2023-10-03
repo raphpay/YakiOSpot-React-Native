@@ -7,14 +7,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from 'react-native';
 
 import AuthService from '../../../business-logic/authService';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
+import Colors from '../../assets/colors/Colors';
 
 function Login(props) {
 
@@ -22,12 +19,6 @@ function Login(props) {
 
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
-
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
   function login() {
     AuthService.shared()
@@ -49,7 +40,7 @@ function Login(props) {
   const isFormValid = email !== "" && password !== "";
 
   return (
-    <SafeAreaView style={[backgroundStyle, styles.container]}>
+    <SafeAreaView style={styles.container}>
       <TextInput
         style={styles.input}
         onChangeText={onChangeEmail}
@@ -68,7 +59,7 @@ function Login(props) {
       />
       <TouchableOpacity
         onPress={login}
-        style={isFormValid ? styles.loginButton : styles.loginButtonDisabled}
+        style={{backgroundColor: isFormValid ? Colors.brownish : "gray", ...styles.loginButton}}
         disabled={!isFormValid}
       > 
         <Text style={styles.loginButtonText}>Login</Text>
@@ -119,8 +110,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     marginBottom: 10,
-    borderRadius: 10,
-    backgroundColor: "blue",
     justifyContent: "center",
     alignItems: "center",
   },
