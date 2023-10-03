@@ -1,14 +1,19 @@
 import React from "react";
 import { SafeAreaView, Text, TouchableOpacity } from "react-native";
 
-import auth from "@react-native-firebase/auth";
+import AuthService from "../../../business-logic/authService";
 
 function Main() {
 
   function logOut() {
-      auth()
-        .signOut()
-        .then(() => console.log('User signed out!'));
+    AuthService.shared()
+        .logout()
+        .then(() => console.log('User signed out!'))
+        .catch(errorMessage => {
+          Alert.alert('Error during logout', errorMessage, [
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+          ]);
+        });
   }
 
   return (

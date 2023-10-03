@@ -8,14 +8,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import auth from '@react-native-firebase/auth';
+import AuthService from '../../../business-logic/authService';
 
 function SignUp() {
 
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [passwordConfirmation, onChangePasswordConfirmation] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
   
   const isFormValid =
     email !== "" &&
@@ -26,28 +25,14 @@ function SignUp() {
 
   function signUp() {
     if (isFormValid) {
-      auth()
-      .createUserWithEmailAndPassword(email, password)
+      AuthService.shared().signUp(email, password)
       .then(() => {
         console.log('User account created & signed in!');
       })
-      .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          setAlertMessage('That email address is already in use!');
-        }
-    
-        if (error.code === 'auth/invalid-email') {
-          setAlertMessage('That email address is invalid!');
-        }
-
-        if (error.code === 'auth/weak-password') {
-          setAlertMessage('Password should be at least 6 characters');
-        }
-
-        Alert.alert('Error during registration', alertMessage, [
+      .catch(errorMessage => {
+        Alert.alert('Error during registration', errorMessage, [
           {text: 'OK', onPress: () => console.log('OK Pressed')},
         ]);
-
       });
     }
   }

@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from 'react-native';
 
-import auth from '@react-native-firebase/auth';
+import AuthService from '../../../business-logic/authService';
 
 import {
   Colors,
@@ -22,7 +22,6 @@ function Login(props) {
 
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
 
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -31,35 +30,13 @@ function Login(props) {
   };
 
   function login() {
-    auth()
-    .signInWithEmailAndPassword(email, password)
+    AuthService.shared()
+    .login(email, password)
     .then(() => {
       console.log('User signed in!');
     })
-    .catch(error => {
-
-      switch (error.code) {
-        case 'auth/invalid-email':
-          setAlertMessage('The email address is invalid!');
-          break;
-        case 'auth/user-disabled':
-          setAlertMessage('The user is disabled!');
-          break;
-        case 'auth/user-not-found':
-          setAlertMessage('The user was not found!');
-          break;
-        case 'auth/wrong-password':
-          setAlertMessage('The password is incorrect!');
-          break;
-        case 'auth/too-many-requests':
-          setAlertMessage('Too many requests!');
-          break;
-        default:
-          setAlertMessage('An error occurred!');
-          break;
-      }
-
-      Alert.alert('Error during registration', alertMessage, [
+    .catch(errorMessage => {
+      Alert.alert('Error during registration', errorMessage, [
         {text: 'OK', onPress: () => console.log('OK Pressed')},
       ]);
     });
