@@ -1,4 +1,4 @@
-import auth from '@react-native-firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 class AuthService {
   // MARK: - Properties and constructor
@@ -66,6 +66,10 @@ class AuthService {
       // Implement a method to check if the user is authenticated
       // For example, check if the user has a valid session or token
       return true; // Replace with your actual authentication check
+    }
+
+    currentUser(): FirebaseAuthTypes.User | null {
+      return auth().currentUser;
     }
 
     // MARK: - Private methods
