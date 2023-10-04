@@ -1,9 +1,15 @@
 import React from "react";
-import { SafeAreaView, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import AuthService from "../../../business-logic/authService";
 
-function Main() {
+function Main(props) {
+
+  const { navigation } = props;
+
+  function goToAddGathering() {
+    navigation.navigate('AddGathering');
+  }
 
   function logOut() {
     AuthService.shared()
@@ -17,12 +23,22 @@ function Main() {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity onPress={goToAddGathering}>
+        <Text>Add Gathering</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={logOut}>
         <Text>Log Out</Text>
       </TouchableOpacity>
     </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+  container : {
+    flex: 1,
+    marginHorizontal: 16,
+  }
+});
 
 export default Main;

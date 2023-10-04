@@ -7,6 +7,7 @@ import Login from '../screens/authentication/Login';
 import SignUp from '../screens/authentication/SignUp';
 
 import Main from '../screens/main/Main';
+import AddGathering from '../screens/gathering/AddGathering';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,7 +34,17 @@ function Navigation() {
       <Stack.Navigator>
         {
           user ? (
-            <Stack.Screen name="Main" component={Main} />
+            <>
+              <Stack.Screen
+                name="Main"
+                component={Main}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="AddGathering"
+                component={AddGathering}
+              />
+            </>
           ) : (
             <>
               <Stack.Screen
