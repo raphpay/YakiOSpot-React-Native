@@ -1,12 +1,15 @@
 interface User {
-  name: string;
+  pseudo: string;
+  email: string;
   uid: string;
   profilePicPath: string;
 }
 
 const MockUser: User = {
-  name: "John Doe",
+  email: 'test@test.com',
+  pseudo: "John Doe",
   uid: "njkzehfiuozh12",
   profilePicPath: "/path/to/profilepic.jpg",
 };
 
+export default User;

@@ -14,7 +14,7 @@ class AuthService {
     }
   
     // MARK: - Public methods
-    login(email: string, password: string): Promise<boolean | string> {      
+    public login(email: string, password: string): Promise<boolean | string> {      
       return new Promise((resolve, reject) => {
         auth()
           .signInWithEmailAndPassword(email, password)
@@ -30,7 +30,7 @@ class AuthService {
       });
     }
   
-    logout(): Promise<void | string> {
+    public logout(): Promise<void | string> {
       return new Promise((resolve, reject) => {
         auth()
           .signOut()
@@ -46,13 +46,13 @@ class AuthService {
       });
     }
 
-    signUp(email: string, password: string): Promise<boolean | string> {
+    public signUp(email: string, password: string): Promise<string> {
       return new Promise((resolve, reject) => {
         auth()
           .createUserWithEmailAndPassword(email, password)
-          .then(() => {
+          .then((result) => {
             console.log('User account created & signed in!');
-            resolve(true);
+            resolve(result.user.uid);
           })
           .catch(error => {
             console.error(error);
@@ -62,13 +62,13 @@ class AuthService {
       });
     } 
   
-    isAuthenticated(): boolean {
+    public isAuthenticated(): boolean {
       // Implement a method to check if the user is authenticated
       // For example, check if the user has a valid session or token
       return true; // Replace with your actual authentication check
     }
 
-    currentUser(): FirebaseAuthTypes.User | null {
+    public currentUser(): FirebaseAuthTypes.User | null {
       return auth().currentUser;
     }
 

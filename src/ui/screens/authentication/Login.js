@@ -1,19 +1,22 @@
 import React, {useState} from 'react';
 import {
   Alert,
-  Image,
+  KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
+  Keyboard
 } from 'react-native';
 
 import AuthService from '../../../business-logic/authService';
 
 import Colors from '../../assets/colors/Colors';
 import BackgroundImage from '../../components/BackgroundImage';
+import TopBarNav from '../../components/TopBarNav';
 
 function Login(props) {
 
@@ -44,35 +47,46 @@ function Login(props) {
   const form = () => {
     return (
       <SafeAreaView style={styles.container}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeEmail}
-          value={email}
-          placeholder='Email'
-          autoCapitalize='none'
-          autoCorrect={false}
-          keyboardType='email-address'
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangePassword}
-          value={password}
-          placeholder="Password"
-          secureTextEntry={true}
-        />
-        <TouchableOpacity
-          onPress={login}
-          style={{backgroundColor: isFormValid ? Colors.brownish : "gray", ...styles.loginButton}}
-          disabled={!isFormValid}
-        > 
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-        <View style={styles.noAccountText}>
-          <Text>Don't have an account?</Text>
-          <TouchableOpacity onPress={goToSignUpScreen} style={styles.signUpButton}>
-            <Text style={styles.signUpButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
+        <KeyboardAvoidingView style={styles.container}>
+          <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+              <TopBarNav />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeEmail}
+                  value={email}
+                  placeholder='Email'
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  keyboardType='email-address'
+                />
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangePassword}
+                  value={password}
+                  placeholder="Password"
+                  secureTextEntry={true}
+                />
+              </View>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={login}
+                  style={{backgroundColor: isFormValid ? Colors.brownish : "gray", ...styles.loginButton}}
+                  disabled={!isFormValid}
+                > 
+                  <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
+                <View style={styles.noAccountText}>
+                  <Text>Don't have an account?</Text>
+                  <TouchableOpacity onPress={goToSignUpScreen} style={styles.signUpButton}>
+                    <Text style={styles.signUpButtonText}>Sign Up</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     )
   }
@@ -86,13 +100,14 @@ function Login(props) {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignContent: "center",
     flex: 1,
+    marginHorizontal: 8,
   },
   input: {
     height: 44,
-    width: "90%",
+    width: "100%",
     padding: 10,
     borderWidth: 1,
     marginBottom: 10,
@@ -101,7 +116,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     height: 44,
-    width: "90%",
+    width: '100%',
     padding: 10,
     borderWidth: 1,
     marginBottom: 10,

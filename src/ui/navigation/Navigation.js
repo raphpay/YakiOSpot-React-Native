@@ -6,8 +6,9 @@ import auth from '@react-native-firebase/auth';
 import Login from '../screens/authentication/Login';
 import SignUp from '../screens/authentication/SignUp';
 
-import Main from '../screens/main/Main';
+import Main from '../screens/main/MainScreen';
 import AddGathering from '../screens/gathering/AddGathering';
+import Profile from '../screens/profile/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,11 @@ function Navigation() {
               <Stack.Screen
                 name="AddGathering"
                 component={AddGathering}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
               />
             </>
           ) : (
