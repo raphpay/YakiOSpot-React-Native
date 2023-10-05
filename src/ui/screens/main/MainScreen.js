@@ -19,6 +19,10 @@ function Main(props) {
     navigation.navigate('AddGathering');
   }
 
+  function goToProfile() {
+    navigation.navigate('Profile');
+  }
+
   function logOut() {
     AuthService.shared()
         .logout()
@@ -57,6 +61,7 @@ function Main(props) {
         <ImageButton 
           source={require('../../assets/icons/person.fill-white.png')}
           size={20}
+          onPress={goToProfile}
         />
       </View>
     )
@@ -99,6 +104,7 @@ function Main(props) {
             <ImageButton 
               source={require('../../assets/icons/plus-white.png')}
               size={25}
+              onPress={goToAddGathering}
             />
           </View>
         </View>
