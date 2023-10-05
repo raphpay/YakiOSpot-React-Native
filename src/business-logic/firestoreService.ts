@@ -1,6 +1,8 @@
 import firestore from '@react-native-firebase/firestore';
 import Utils from './utils';
+
 import Gathering from '../model/Gathering';
+import User from '../model/User';
 
 class FirestoreService {
   // MARK: - Properties and constructor
@@ -25,7 +27,7 @@ class FirestoreService {
           .add({
             name,
             date,
-            owner: creatorID,
+            ownerID: creatorID,
           })
           .then(() => {
             console.log('Gathering added!');
@@ -69,15 +71,46 @@ class FirestoreService {
             console.log('Gathering ID: ', documentSnapshot.id, documentSnapshot.data());
             const date = documentSnapshot.data().date.toDate();
             const name = documentSnapshot.data().name;
+            const ownerID = documentSnapshot.data().ownerID;
             const gathering: Gathering = {
               id: Utils.generateUUID(),
               date,
               name,
+              ownerID,
               peopleUIDs: [],
             }
             gatherings.push(gathering);
           });
           resolve(gatherings);
+        })
+        .catch(error => {
+          console.log(error);
+          reject(error);
+        });
+      });
+    }
+
+    public async retrieveUserFromUID(uid: string): Promise<User | string> {
+      return new Promise((resolve, reject) => {
+        firestore()
+        .collection(this.USERS_COLLECTION)
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => {
+          const data = documentSnapshot.data();
+          if (data !== undefined) {
+            const email = data.email;
+            const pseudo = data.pseudo;
+            const user: User = {
+              uid,
+              email,
+              pseudo,
+              profilePicPath: data.profilePicPath,
+            }
+            resolve(user);
+          } else {
+            reject('User not found');
+          }
         })
         .catch(error => {
           console.log(error);

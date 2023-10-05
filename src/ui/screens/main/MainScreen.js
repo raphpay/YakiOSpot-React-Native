@@ -9,6 +9,7 @@ import TopBarNav from "../../components/TopBarNav";
 import ImageButton from "../../components/ImageButton";
 
 import Colors from "../../assets/colors/Colors";
+import GatheringCard from "../gathering/GatheringCard";
 
 function Main(props) {
 
@@ -94,9 +95,10 @@ function Main(props) {
       <View>
         {gatherings.map(gathering => {
           return (
-            <Text key={gathering.id}>
-              {gathering.name}
-            </Text>
+            <GatheringCard
+              key={gathering.id}
+              gathering={gathering}
+            />
           )
         })}
       </View>
@@ -115,6 +117,7 @@ function Main(props) {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          showsVerticalScrollIndicator={false}
         >
           {isNoEvents ? noEventContent() : eventList()}
         </ScrollView>

@@ -12,3 +12,4 @@ const MockUser: User = {
   profilePicPath: "/path/to/profilepic.jpg",
 };
 
+export default User;

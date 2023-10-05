@@ -5,6 +5,7 @@ interface Gathering {
   name: string;
   date: Date;
   peopleUIDs: string[];
+  ownerID: string;
 }
 
 const MockGathering: Gathering = {
@@ -12,6 +13,7 @@ const MockGathering: Gathering = {
   name: "Birthday Party",
   date: new Date("2023-10-15"),
   peopleUIDs: ["iuyzauiydbiuaz", "ijoiejzdoizejfdoijze", "iuzaiudzaiudzaiudz"],
+  ownerID: Utils.generateUUID(),
 };
 
 export default Gathering;
