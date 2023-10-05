@@ -44,6 +44,7 @@ function Navigation() {
               <Stack.Screen
                 name="AddGathering"
                 component={AddGathering}
+                options={{ headerShown: false }}
               />
               <Stack.Screen
                 name="Profile"
