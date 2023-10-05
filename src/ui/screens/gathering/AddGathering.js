@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import { Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Gathering from '../../../model/Gathering.ts'
+
+import AuthService from "../../../business-logic/authService";
+import FirestoreService from "../../../business-logic/firestoreService";
 
 function AddGathering() {
 
@@ -15,7 +17,19 @@ function AddGathering() {
   };
 
   function saveGathering() {
-    console.log(name, date);
+    if (name !== "") {
+      const user = AuthService.shared().currentUser();
+      FirestoreService.shared()
+        .createGathering(user.uid, name, date)
+        .then(() => {
+          console.log("Gathering created");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      Alert.alert("Please enter a name for the gathering");
+    }
   }
 
   return (

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import AuthService from "../../../business-logic/authService";
+import FirestoreService from "../../../business-logic/firestoreService";
 
 function Main(props) {
 
@@ -21,6 +22,10 @@ function Main(props) {
           ]);
         });
   }
+
+  useEffect(() => {
+    FirestoreService.shared().readGatherings();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
