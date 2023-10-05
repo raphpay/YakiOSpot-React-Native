@@ -1,4 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
+import Utils from './utils';
+import Gathering from '../model/Gathering';
 
 class FirestoreService {
   // MARK: - Properties and constructor
@@ -35,17 +37,33 @@ class FirestoreService {
     }
 
     // MARK: - Read
-    public async readGatherings() {
-      firestore()
+    public async readGatherings(): Promise<Gathering[] | null>{
+      return new Promise((resolve, reject) => {
+        firestore()
         .collection(this.GATHERING_COLLECTION)
         .get()
         .then(querySnapshot => {
+          let gatherings: Gathering[] = [];
           console.log('Total gatherings: ', querySnapshot.size);
-
           querySnapshot.forEach(documentSnapshot => {
             console.log('Gathering ID: ', documentSnapshot.id, documentSnapshot.data());
+            const date = documentSnapshot.data().date.toDate();
+            const name = documentSnapshot.data().name;
+            const gathering: Gathering = {
+              id: Utils.generateUUID(),
+              date,
+              name,
+              peopleUIDs: [],
+            }
+            gatherings.push(gathering);
           });
+          resolve(gatherings);
+        })
+        .catch(error => {
+          console.log(error);
+          reject(error);
         });
+      });
     }
 
     // MARK: - Update
