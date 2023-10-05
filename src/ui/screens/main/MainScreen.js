@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import AuthService from "../../../business-logic/authService";
 import FirestoreService from "../../../business-logic/firestoreService";
+
 import BackgroundImage from "../../components/BackgroundImage";
 import TopBarNav from "../../components/TopBarNav";
 import ImageButton from "../../components/ImageButton";
@@ -14,6 +15,7 @@ function Main(props) {
   const { navigation } = props;
 
   const [gatherings, setGatherings] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   function goToAddGathering() {
     navigation.navigate('AddGathering');
@@ -34,14 +36,26 @@ function Main(props) {
         });
   }
 
+  async function onRefresh() {
+    setRefreshing(true);
+    await readGatherings();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }
+
+  async function readGatherings() {
+    const firestoreGatherings = await FirestoreService.shared().readGatherings();
+    setGatherings(firestoreGatherings);
+  }
+
   useEffect(() => {
     async function init() {
-      const firestoreGatherings = await FirestoreService.shared().readGatherings();
-      setGatherings(firestoreGatherings);
+      await readGatherings();
     }
     init();
   }, []);
-
+  
   const isNoEvents = gatherings.length === 0;
 
   const searchButton = () => {
@@ -98,7 +112,9 @@ function Main(props) {
         />
         <ScrollView
           contentContainerStyle={isNoEvents ? styles.emptyScrollView : styles.scrollViewContainer}
-          scrollEnabled={!isNoEvents}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {isNoEvents ? noEventContent() : eventList()}
         </ScrollView>

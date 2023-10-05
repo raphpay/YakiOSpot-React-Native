@@ -21,10 +21,11 @@ class FirestoreService {
     // MARK: - Create
     public createGathering(creatorID: string, name: String, date: Date): Promise<void | string> {
       return new Promise((resolve, reject) => {
-        firestore().collection(this.GATHERING_COLLECTION).doc(creatorID)
-          .set({
+        firestore().collection(this.GATHERING_COLLECTION)
+          .add({
             name,
-            date
+            date,
+            owner: creatorID,
           })
           .then(() => {
             console.log('Gathering added!');
