@@ -6,6 +6,7 @@ class FirestoreService {
   // MARK: - Properties and constructor
     private static instance: FirestoreService | null = null;
     private GATHERING_COLLECTION = 'gatherings';
+    private USERS_COLLECTION = 'users';
   
     private constructor() {}
   
@@ -33,6 +34,24 @@ class FirestoreService {
             console.log(error);
             reject(error);
           });
+      });
+    }
+
+    public createUser(pseudo: string, email: string, uid: string): Promise<void | string> {
+      return new Promise((resolve, reject) => {
+        firestore().collection(this.USERS_COLLECTION).doc(uid)
+        .set({
+          pseudo,
+          email,
+        })
+        .then(() => {
+          console.log('User added!');
+          resolve();
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
+        });
       });
     }
 

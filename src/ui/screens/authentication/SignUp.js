@@ -17,12 +17,16 @@ import AuthService from '../../../business-logic/authService';
 import BackgroundImage from '../../components/BackgroundImage';
 import TopBarNav from '../../components/TopBarNav';
 import ImageButton from '../../components/ImageButton';
+import FirestoreService from '../../../business-logic/firestoreService';
+
+import Colors from '../../assets/colors/Colors';
 
 function SignUp(props) {
 
   const { navigation } = props;
 
   const [email, onChangeEmail] = useState("");
+  const [pseudo, onChangePseudo] = useState("");
   const [password, onChangePassword] = useState("");
   const [passwordConfirmation, onChangePasswordConfirmation] = useState("");
   
@@ -36,8 +40,8 @@ function SignUp(props) {
   function signUp() {
     if (isFormValid) {
       AuthService.shared().signUp(email, password)
-      .then(() => {
-        console.log('User account created & signed in!');
+      .then((uid) => {
+        FirestoreService.shared().createUser(pseudo, email, uid);
       })
       .catch(errorMessage => {
         Alert.alert('Error during registration', errorMessage, [
@@ -74,6 +78,14 @@ function SignUp(props) {
                   autoCapitalize='none'
                   autoCorrect={false}
                   keyboardType='email-address'
+                />
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangePseudo}
+                  value={pseudo}
+                  placeholder='Pseudo'
+                  autoCapitalize='none'
+                  autoCorrect={false}
                 />
                 <TextInput
                   style={styles.input}

@@ -96,7 +96,10 @@ function Main(props) {
           leftComponent={searchButton()}
           rightComponent={profileButton()}
         />
-        <ScrollView contentContainerStyle={isNoEvents ? styles.emptyScrollView : styles.scrollViewContainer}>
+        <ScrollView
+          contentContainerStyle={isNoEvents ? styles.emptyScrollView : styles.scrollViewContainer}
+          scrollEnabled={!isNoEvents}
+        >
           {isNoEvents ? noEventContent() : eventList()}
         </ScrollView>
         <View style={styles.addButtonContainer}>

@@ -46,13 +46,13 @@ class AuthService {
       });
     }
 
-    public signUp(email: string, password: string): Promise<boolean | string> {
+    public signUp(email: string, password: string): Promise<string> {
       return new Promise((resolve, reject) => {
         auth()
           .createUserWithEmailAndPassword(email, password)
-          .then(() => {
+          .then((result) => {
             console.log('User account created & signed in!');
-            resolve(true);
+            resolve(result.user.uid);
           })
           .catch(error => {
             console.error(error);
