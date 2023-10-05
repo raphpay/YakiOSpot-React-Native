@@ -6,7 +6,7 @@ import auth from '@react-native-firebase/auth';
 import Login from '../screens/authentication/Login';
 import SignUp from '../screens/authentication/SignUp';
 
-import Main from '../screens/main/Main';
+import Main from '../screens/main/MainScreen';
 import AddGathering from '../screens/gathering/AddGathering';
 
 const Stack = createNativeStackNavigator();
