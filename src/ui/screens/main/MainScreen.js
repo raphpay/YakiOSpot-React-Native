@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import AuthService from "../../../business-logic/authService";
@@ -12,6 +12,8 @@ import Colors from "../../assets/colors/Colors";
 function Main(props) {
 
   const { navigation } = props;
+
+  const [gatherings, setGatherings] = useState([]);
 
   function goToAddGathering() {
     navigation.navigate('AddGathering');
@@ -29,8 +31,14 @@ function Main(props) {
   }
 
   useEffect(() => {
-    FirestoreService.shared().readGatherings();
+    async function init() {
+      const firestoreGatherings = await FirestoreService.shared().readGatherings();
+      setGatherings(firestoreGatherings);
+    }
+    init();
   }, []);
+
+  const isNoEvents = gatherings.length === 0;
 
   const searchButton = () => {
     return (
@@ -54,6 +62,28 @@ function Main(props) {
     )
   }
 
+  const noEventContent = () => {
+    return (
+      <Text style={styles.noEventText}>
+        No events registered yet
+      </Text>
+    );
+  }
+
+  const eventList = () => {
+    return (
+      <View>
+        {gatherings.map(gathering => {
+          return (
+            <Text key={gathering.id}>
+              {gathering.name}
+            </Text>
+          )
+        })}
+      </View>
+    );
+  }
+
   const mainContent = () => {
     return (
       <SafeAreaView style={styles.container}>
@@ -61,9 +91,17 @@ function Main(props) {
           leftComponent={searchButton()}
           rightComponent={profileButton()}
         />
-        <ScrollView>
-          <Text>Hello</Text>
+        <ScrollView contentContainerStyle={isNoEvents ? styles.emptyScrollView : styles.scrollViewContainer}>
+          {isNoEvents ? noEventContent() : eventList()}
         </ScrollView>
+        <View style={styles.addButtonContainer}>
+          <View style={{...styles.plusCircle, backgroundColor: Colors.brownish}}>
+            <ImageButton 
+              source={require('../../assets/icons/plus-white.png')}
+              size={25}
+            />
+          </View>
+        </View>
       </SafeAreaView>
     )
   }
@@ -91,6 +129,33 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.6,
     shadowRadius: 5,
+  },
+  plusCircle: {
+    borderRadius: 50,
+    height: 56,
+    width: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: 'black',
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.6,
+    shadowRadius: 5,
+  },
+  emptyScrollView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollViewContainer: {
+    flex: 1,
+  },
+  noEventText: {
+    fontWeight: '700',
+    fontSize: 20,
+  },
+  addButtonContainer: {
+    width: '100%',
+    alignItems: 'flex-end',
   }
 });
 
