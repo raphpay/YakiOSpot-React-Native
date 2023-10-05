@@ -3,14 +3,14 @@ import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 function ImageButton(props) {
 
-  const { source, onPress } = props;
+  const { source, size, onPress,  } = props;
 
   return (
     <TouchableOpacity onPress={onPress}>
       <Image
         source={source}
         resizeMode={'cover'}
-        style={styles.image}
+        style={[styles.image, {height: size, width: size}]}
       />
     </TouchableOpacity>
   )
