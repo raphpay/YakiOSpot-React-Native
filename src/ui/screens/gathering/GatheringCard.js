@@ -12,20 +12,25 @@ function GatheringCard(props) {
   const { gathering } = props;
 
   const [ownerName, setOwnerName] = useState("");
+  const [ownerID, setOwnerID] = useState("");
+  const [showParticipationButton, setShowParticipationButton] = useState(false);
 
-  function convertOwnerIDToName(ownerID) {
-    FirestoreService.shared().retrieveUserFromUID(ownerID)
-    .then((user) => {
-      console.log(user);
-      setOwnerName(user.pseudo);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  async function convertOwnerIDToName(ownerID) {
+    const user = await FirestoreService.shared().retrieveUserFromUID(ownerID);
+    setOwnerID(user.uid);
+    setOwnerName(user.pseudo);
+  }
+
+  function compareOwnerIDToCurrentUser() {
+    setShowParticipationButton(ownerID !== gathering.ownerID);
   }
 
   useEffect(() => {
-    convertOwnerIDToName(gathering.ownerID);
+    async function init() {
+      await convertOwnerIDToName(gathering.ownerID);
+      compareOwnerIDToCurrentUser();
+    }
+    init();
   }, []);
 
   return (
@@ -41,11 +46,13 @@ function GatheringCard(props) {
           <ProfilePictures />
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={{...styles.button, backgroundColor: Colors.brownish}}>
-          <Text style={styles.buttonText}>I'm in</Text>
-        </TouchableOpacity>
-      </View>
+      { showParticipationButton && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={{...styles.button, backgroundColor: Colors.brownish}}>
+            <Text style={styles.buttonText}>I'm in</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   )
 }
