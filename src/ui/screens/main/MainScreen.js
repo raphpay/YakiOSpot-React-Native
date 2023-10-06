@@ -98,6 +98,7 @@ function Main(props) {
             <GatheringCard
               key={gathering.id}
               gathering={gathering}
+              navigation={navigation}
             />
           )
         })}

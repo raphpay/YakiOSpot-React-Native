@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -12,34 +12,16 @@ import Colors from "../../assets/colors/Colors";
 
 function AddGathering(props) {
 
-  const { navigation } = props;
+  const { navigation, route } = props;
+  const { gathering } = route.params;
 
   const [name, onChangeName] = useState("");
   const [description, onChangeDescription] = useState("");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date(gathering.date));
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setDate(currentDate);
-    console.log(currentDate);
-  };
-
-  function saveGathering() {
-    if (name !== "") {
-      const user = AuthService.shared().currentUser();
-      FirestoreService.shared()
-        .createGathering(user.uid, name, date)
-        .then(() => {
-          console.log("Gathering created");
-          navigation.goBack();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      Alert.alert("Please enter a name for the gathering");
-    }
-  }
+  useEffect(() => {
+    console.log(gathering);
+  }, [gathering]);
 
   const backButton = () => {
     return (
@@ -65,47 +47,23 @@ function AddGathering(props) {
               <View style={styles.container}>
                 <View style={styles.inputContainer}>
                   <Text style={styles.title}>
-                    Create a new event:
+                    {gathering.name}
                   </Text>
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeName}
-                    value={name}
-                    placeholder='Event Name'
-                    autoCorrect={false}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeDescription}
-                    value={description}
-                    placeholder='Event Description'
-                  />
+                  <Text>{gathering.description}</Text>
                   <DateTimePicker
-                    testID="dateTimePicker"
                     value={date}
                     mode={'date'}
                     is24Hour={true}
-                    onChange={onChange}
                     accentColor="black"
-                    minimumDate={new Date()}
+                    disabled={true}
                   />
                   <DateTimePicker
-                    testID="dateTimePicker"
                     value={date}
                     mode={'time'}
                     is24Hour={true}
-                    onChange={onChange}
-                    minimumDate={new Date()}
+                    disabled={true}
                   />
                 </View>
-                <TouchableOpacity
-                  style={{...styles.saveButton, backgroundColor: isFormValid ? Colors.brownish : 'gray' }}
-                  onPress={saveGathering}
-                >
-                  <Text style={styles.saveButtonTitle}>
-                    Save Gathering
-                  </Text>
-                </TouchableOpacity>
               </View>
             </View>
           </TouchableWithoutFeedback>
