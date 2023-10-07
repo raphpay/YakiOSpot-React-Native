@@ -23,11 +23,13 @@ class FirestoreService {
     // MARK: - Create
     public createGathering(creatorID: string, name: String, date: Date): Promise<void | string> {
       return new Promise((resolve, reject) => {
-        firestore().collection(this.GATHERING_COLLECTION)
-          .add({
+        const gatheringID = Utils.generateUUID();
+        firestore().collection(this.GATHERING_COLLECTION).doc(gatheringID)
+          .set({
             name,
             date,
             ownerID: creatorID,
+            id: gatheringID
           })
           .then(() => {
             console.log('Gathering added!');
@@ -58,6 +60,35 @@ class FirestoreService {
       });
     }
 
+    public async addParticipantToGathering(gatheringID: string, userID: string): Promise<void | string> {
+      const peopleUIDs = await this.readParticipantsFromGathering(gatheringID);
+
+      let array: string[] = [];
+      if (peopleUIDs !== undefined) {
+        array = peopleUIDs as string[];
+        if (!peopleUIDs?.includes(userID)) {
+          array.push(userID);
+        }
+      } else {
+        array = [userID];
+      }
+
+      return new Promise((resolve, reject) => {
+        firestore().collection(this.GATHERING_COLLECTION).doc(gatheringID)
+          .set({
+            peopleUIDs: array,
+          }, {merge: true})
+          .then(() => {
+            console.log('Participant added!');
+            resolve();
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      });
+    }
+
     // MARK: - Read
     public async readGatherings(): Promise<Gathering[] | null>{
       return new Promise((resolve, reject) => {
@@ -72,8 +103,9 @@ class FirestoreService {
             const date = documentSnapshot.data().date.toDate();
             const name = documentSnapshot.data().name;
             const ownerID = documentSnapshot.data().ownerID;
+            const id = documentSnapshot.data().id;
             const gathering: Gathering = {
-              id: Utils.generateUUID(),
+              id,
               date,
               name,
               ownerID,
@@ -124,6 +156,27 @@ class FirestoreService {
     // MARK: - Delete
 
     // MARK: - Private methods
-  }
+    private readParticipantsFromGathering(gatheringID: string): Promise<string[] | null> {
+      return new Promise((resolve, reject) => {
+        firestore()
+        .collection(this.GATHERING_COLLECTION)
+        .doc(gatheringID)
+        .get()
+        .then(documentSnapshot => {
+          const data = documentSnapshot.data();
+          if (data !== undefined) {
+            const peopleUIDs = data.peopleUIDs;
+            resolve(peopleUIDs);
+          } else {
+            reject('Gathering not found');
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          reject(error);
+        });
+      });
+    }
+}
   
 export default FirestoreService;

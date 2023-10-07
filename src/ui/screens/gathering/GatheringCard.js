@@ -1,28 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+
 import FirestoreService from "../../../business-logic/firestoreService";
-import Colors from "../../assets/colors/Colors";
+import AuthService from "../../../business-logic/authService";
+import Utils from "../../../business-logic/utils";
+
 import PillView from "../../components/PillView";
 import Label from "../../components/Label";
-import Utils from "../../../business-logic/utils";
 import ProfilePictures from "../../components/ProfilePictures";
+
+import Colors from "../../assets/colors/Colors";
 
 function GatheringCard(props) {
 
   const { gathering, navigation } = props;
 
   const [ownerName, setOwnerName] = useState("");
-  const [ownerID, setOwnerID] = useState("");
+  const [currentUserID, setCurrentUserID] = useState("");
   const [showParticipationButton, setShowParticipationButton] = useState(false);
 
   async function convertOwnerIDToName(ownerID) {
     const user = await FirestoreService.shared().retrieveUserFromUID(ownerID);
-    setOwnerID(user.uid);
     setOwnerName(user.pseudo);
   }
 
   function compareOwnerIDToCurrentUser() {
-    setShowParticipationButton(ownerID !== gathering.ownerID);
+    const currentUser = AuthService.shared().currentUser();
+    setCurrentUserID(currentUser.uid);
+    setShowParticipationButton(currentUserID !== gathering.ownerID);
   }
 
   function goToDetails() {
@@ -34,6 +39,10 @@ function GatheringCard(props) {
     navigation.navigate('GatheringDetails', {
       gathering: serializableGathering,
     });
+  }
+
+  async function participate() {
+    await FirestoreService.shared().addParticipantToGathering(gathering.id, currentUserID);
   }
 
   useEffect(() => {
@@ -60,7 +69,10 @@ function GatheringCard(props) {
         </View>
         { showParticipationButton && (
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={{...styles.button, backgroundColor: Colors.brownish}}>
+            <TouchableOpacity
+              style={{...styles.button, backgroundColor: Colors.brownish}}
+              onPress={participate}
+            >
               <Text style={styles.buttonText}>I'm in</Text>
             </TouchableOpacity>
           </View>
@@ -115,6 +127,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.6,
     shadowRadius: 5,
+    marginBottom: 10,
   },
   buttonText: {
     fontSize: 18,
