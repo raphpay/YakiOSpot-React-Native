@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import AuthService from "../../../business-logic/authService";
@@ -9,6 +9,7 @@ import BackgroundImage from "../../components/BackgroundImage";
 import TopBarNav from "../../components/TopBarNav";
 import ImageButton from "../../components/ImageButton";
 import Colors from "../../assets/colors/Colors";
+import GatheringParticipationButton from "./GatheringParticipationButton";
 
 function AddGathering(props) {
 
@@ -18,6 +19,7 @@ function AddGathering(props) {
   const [name, onChangeName] = useState("");
   const [description, onChangeDescription] = useState("");
   const [date, setDate] = useState(new Date(gathering.date));
+  const [isUserParticipating, setIsUserParticipating] = useState(false);
 
   useEffect(() => {
     console.log(gathering);
@@ -33,7 +35,34 @@ function AddGathering(props) {
     )
   }
 
-  const isFormValid = name !== "";
+  async function participate() {
+    if (!isUserParticipating) {
+      await FirestoreService.shared().addParticipantToGathering(gathering.id, AuthService.shared().currentUser().uid);
+      setIsUserParticipating(true);
+    } else {
+      await FirestoreService.shared().removeParticipantFromGathering(gathering.id, AuthService.shared().currentUser().uid);
+      setIsUserParticipating(false);
+    }
+  }
+
+  useEffect(() => {
+    setIsUserParticipating(gathering.peopleUIDs.includes(AuthService.shared().currentUser().uid));
+  }, []);
+
+  const participateButton = () => {
+    return (
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={participate}
+          style={{...styles.button, backgroundColor: isUserParticipating ? 'red' : Colors.brownish}}
+        >
+          <Text style={styles.buttonText}>
+            {isUserParticipating ? "I can't make it" : "I'm in !"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
 
   const mainContent = () => {
     return (
@@ -65,6 +94,7 @@ function AddGathering(props) {
                   />
                 </View>
               </View>
+              <GatheringParticipationButton gathering={gathering} />
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

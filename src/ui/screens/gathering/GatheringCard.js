@@ -10,6 +10,7 @@ import Label from "../../components/Label";
 import ProfilePictures from "../../components/ProfilePictures";
 
 import Colors from "../../assets/colors/Colors";
+import GatheringParticipationButton from "./GatheringParticipationButton";
 
 function GatheringCard(props) {
 
@@ -68,14 +69,7 @@ function GatheringCard(props) {
           </View>
         </View>
         { showParticipationButton && (
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={{...styles.button, backgroundColor: Colors.brownish}}
-              onPress={participate}
-            >
-              <Text style={styles.buttonText}>I'm in</Text>
-            </TouchableOpacity>
-          </View>
+          <GatheringParticipationButton gathering={gathering}/>
         )}
       </View>
     </TouchableWithoutFeedback>
@@ -108,32 +102,11 @@ const styles = StyleSheet.create({
   profilePictures: {
     paddingRight: 10,
   },
-  buttonContainer: {
-    alignItems: "center",
-    paddingTop: 15,
-  },
   timeContainer: {
     justifyContent: "flex-end",
     alignItems: "flex-end",
     paddingTop: 10,
   },
-  button: {
-    width: '80%',
-    height: 44,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: 'black',
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.6,
-    shadowRadius: 5,
-    marginBottom: 10,
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: 'white',
-  }
 });
 
 export default GatheringCard;

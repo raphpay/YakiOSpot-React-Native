@@ -154,6 +154,34 @@ class FirestoreService {
     // MARK: - Update
 
     // MARK: - Delete
+    public async removeParticipantFromGathering(gatheringID: string, userID: string): Promise<void | string> {
+      const peopleUIDs = await this.readParticipantsFromGathering(gatheringID);
+      
+      let array: string[] = [];
+      if (peopleUIDs !== undefined) {
+        array = peopleUIDs as string[];
+        if (!peopleUIDs?.includes(userID)) {
+          array = array.filter((value) => {
+            return value !== userID;
+          });
+        }
+      }
+
+      return new Promise((resolve, reject) => {
+        firestore().collection(this.GATHERING_COLLECTION).doc(gatheringID)
+          .update({
+            peopleUIDs: firestore.FieldValue.arrayRemove(userID),
+          })
+          .then(() => {
+            console.log('Participant removed!');
+            resolve();
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      });
+    }
 
     // MARK: - Private methods
     private readParticipantsFromGathering(gatheringID: string): Promise<string[] | null> {
