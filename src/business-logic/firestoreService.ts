@@ -97,9 +97,7 @@ class FirestoreService {
         .get()
         .then(querySnapshot => {
           let gatherings: Gathering[] = [];
-          console.log('Total gatherings: ', querySnapshot.size);
           querySnapshot.forEach(documentSnapshot => {
-            console.log('Gathering ID: ', documentSnapshot.id, documentSnapshot.data());
             const date = documentSnapshot.data().date.toDate();
             const name = documentSnapshot.data().name;
             const ownerID = documentSnapshot.data().ownerID;

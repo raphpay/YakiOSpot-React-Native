@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 
-import AuthService from "../../../business-logic/authService";
 import FirestoreService from "../../../business-logic/firestoreService";
 
 import BackgroundImage from "../../components/BackgroundImage";
@@ -26,17 +32,6 @@ function Main(props) {
     navigation.navigate('Profile');
   }
 
-  function logOut() {
-    AuthService.shared()
-        .logout()
-        .then(() => console.log('User signed out!'))
-        .catch(errorMessage => {
-          Alert.alert('Error during logout', errorMessage, [
-            {text: 'OK', onPress: () => console.log('OK Pressed')},
-          ]);
-        });
-  }
-
   async function onRefresh() {
     setRefreshing(true);
     await readGatherings();
@@ -51,11 +46,10 @@ function Main(props) {
   }
 
   useEffect(() => {
-    async function init() {
+    navigation.addListener('focus', async () => {
       await readGatherings();
-    }
-    init();
-  }, []);
+    });
+  }, [navigation]);
   
   const isNoEvents = gatherings.length === 0;
 

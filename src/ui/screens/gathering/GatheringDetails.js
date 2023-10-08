@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { 
+  Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View
+} from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import AuthService from "../../../business-logic/authService";
-import FirestoreService from "../../../business-logic/firestoreService";
 
 import BackgroundImage from "../../components/BackgroundImage";
 import TopBarNav from "../../components/TopBarNav";
 import ImageButton from "../../components/ImageButton";
-import Colors from "../../assets/colors/Colors";
 import GatheringParticipationButton from "./GatheringParticipationButton";
 
 function AddGathering(props) {
@@ -16,14 +22,16 @@ function AddGathering(props) {
   const { navigation, route } = props;
   const { gathering } = route.params;
 
-  const [name, onChangeName] = useState("");
-  const [description, onChangeDescription] = useState("");
-  const [date, setDate] = useState(new Date(gathering.date));
-  const [isUserParticipating, setIsUserParticipating] = useState(false);
+  const [showParticipationButton, setShowParticipationButton] = useState(false);
+
+  function compareOwnerIDToCurrentUser() {
+    const currentUser = AuthService.shared().currentUser();
+    setShowParticipationButton(currentUser.uid !== gathering.ownerID);
+  }
 
   useEffect(() => {
-    console.log(gathering);
-  }, [gathering]);
+    compareOwnerIDToCurrentUser();
+  }, []);
 
   const backButton = () => {
     return (
@@ -32,35 +40,6 @@ function AddGathering(props) {
         size={30}
         onPress={() => navigation.goBack()}
       />
-    )
-  }
-
-  async function participate() {
-    if (!isUserParticipating) {
-      await FirestoreService.shared().addParticipantToGathering(gathering.id, AuthService.shared().currentUser().uid);
-      setIsUserParticipating(true);
-    } else {
-      await FirestoreService.shared().removeParticipantFromGathering(gathering.id, AuthService.shared().currentUser().uid);
-      setIsUserParticipating(false);
-    }
-  }
-
-  useEffect(() => {
-    setIsUserParticipating(gathering.peopleUIDs.includes(AuthService.shared().currentUser().uid));
-  }, []);
-
-  const participateButton = () => {
-    return (
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={participate}
-          style={{...styles.button, backgroundColor: isUserParticipating ? 'red' : Colors.brownish}}
-        >
-          <Text style={styles.buttonText}>
-            {isUserParticipating ? "I can't make it" : "I'm in !"}
-          </Text>
-        </TouchableOpacity>
-      </View>
     )
   }
 
@@ -80,21 +59,25 @@ function AddGathering(props) {
                   </Text>
                   <Text>{gathering.description}</Text>
                   <DateTimePicker
-                    value={date}
+                    value={new Date(gathering.date)}
                     mode={'date'}
                     is24Hour={true}
                     accentColor="black"
                     disabled={true}
                   />
+                 
                   <DateTimePicker
-                    value={date}
+                    value={new Date(gathering.date)}
                     mode={'time'}
                     is24Hour={true}
                     disabled={true}
                   />
                 </View>
               </View>
-              <GatheringParticipationButton gathering={gathering} />
+              { showParticipationButton && (
+                  <GatheringParticipationButton gathering={gathering} />
+                )
+              }
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

@@ -13,20 +13,21 @@ function GatheringParticipationButton(props) {
   const [isUserParticipating, setIsUserParticipating] = useState(false);
 
   async function participate() {
-    if (!isUserParticipating) {
-      await FirestoreService.shared().addParticipantToGathering(gathering.id, AuthService.shared().currentUser().uid);
+    const currentUser = AuthService.shared().currentUser().uid;
+    if (isUserParticipating) {
+      await FirestoreService.shared().addParticipantToGathering(gathering.id, currentUser);
       setIsUserParticipating(true);
     } else {
-      await FirestoreService.shared().removeParticipantFromGathering(gathering.id, AuthService.shared().currentUser().uid);
+      await FirestoreService.shared().removeParticipantFromGathering(gathering.id, currentUser);
       setIsUserParticipating(false);
     }
   }
 
   useEffect(() => {
-    // This is not correclty working as we don't have the latest gathering update
-    // TODO: Get the firestore latest update 
-    setIsUserParticipating(gathering.peopleUIDs.includes(AuthService.shared().currentUser().uid));
-  }, []);
+    const currentUser = AuthService.shared().currentUser().uid;
+    const isUserIn = gathering.peopleUIDs.includes(currentUser);
+    setIsUserParticipating(isUserIn);
+  }, [gathering]);
 
   return (
     <View style={styles.buttonContainer}>

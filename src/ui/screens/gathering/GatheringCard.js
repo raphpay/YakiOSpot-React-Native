@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 
 import FirestoreService from "../../../business-logic/firestoreService";
 import AuthService from "../../../business-logic/authService";
@@ -8,9 +8,9 @@ import Utils from "../../../business-logic/utils";
 import PillView from "../../components/PillView";
 import Label from "../../components/Label";
 import ProfilePictures from "../../components/ProfilePictures";
+import GatheringParticipationButton from "./GatheringParticipationButton";
 
 import Colors from "../../assets/colors/Colors";
-import GatheringParticipationButton from "./GatheringParticipationButton";
 
 function GatheringCard(props) {
 
@@ -40,10 +40,6 @@ function GatheringCard(props) {
     navigation.navigate('GatheringDetails', {
       gathering: serializableGathering,
     });
-  }
-
-  async function participate() {
-    await FirestoreService.shared().addParticipantToGathering(gathering.id, currentUserID);
   }
 
   useEffect(() => {
