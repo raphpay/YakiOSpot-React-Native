@@ -9,6 +9,7 @@ import SignUp from '../screens/authentication/SignUp';
 import Main from '../screens/main/MainScreen';
 import AddGathering from '../screens/gathering/AddGathering';
 import Profile from '../screens/profile/ProfileScreen';
+import GatheringDetails from '../screens/gathering/GatheringDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -49,6 +50,11 @@ function Navigation() {
               <Stack.Screen
                 name="Profile"
                 component={Profile}
+              />
+              <Stack.Screen
+                name="GatheringDetails"
+                component={GatheringDetails}
+                options={{ headerShown: false }}
               />
             </>
           ) : (

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Alert, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import AuthService from "../../../business-logic/authService";
@@ -9,37 +9,21 @@ import BackgroundImage from "../../components/BackgroundImage";
 import TopBarNav from "../../components/TopBarNav";
 import ImageButton from "../../components/ImageButton";
 import Colors from "../../assets/colors/Colors";
+import GatheringParticipationButton from "./GatheringParticipationButton";
 
 function AddGathering(props) {
 
-  const { navigation } = props;
+  const { navigation, route } = props;
+  const { gathering } = route.params;
 
   const [name, onChangeName] = useState("");
   const [description, onChangeDescription] = useState("");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date(gathering.date));
+  const [isUserParticipating, setIsUserParticipating] = useState(false);
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setDate(currentDate);
-    console.log(currentDate);
-  };
-
-  function saveGathering() {
-    if (name !== "") {
-      const user = AuthService.shared().currentUser();
-      FirestoreService.shared()
-        .createGathering(user.uid, name, date)
-        .then(() => {
-          console.log("Gathering created");
-          navigation.goBack();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      Alert.alert("Please enter a name for the gathering");
-    }
-  }
+  useEffect(() => {
+    console.log(gathering);
+  }, [gathering]);
 
   const backButton = () => {
     return (
@@ -51,7 +35,34 @@ function AddGathering(props) {
     )
   }
 
-  const isFormValid = name !== "";
+  async function participate() {
+    if (!isUserParticipating) {
+      await FirestoreService.shared().addParticipantToGathering(gathering.id, AuthService.shared().currentUser().uid);
+      setIsUserParticipating(true);
+    } else {
+      await FirestoreService.shared().removeParticipantFromGathering(gathering.id, AuthService.shared().currentUser().uid);
+      setIsUserParticipating(false);
+    }
+  }
+
+  useEffect(() => {
+    setIsUserParticipating(gathering.peopleUIDs.includes(AuthService.shared().currentUser().uid));
+  }, []);
+
+  const participateButton = () => {
+    return (
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={participate}
+          style={{...styles.button, backgroundColor: isUserParticipating ? 'red' : Colors.brownish}}
+        >
+          <Text style={styles.buttonText}>
+            {isUserParticipating ? "I can't make it" : "I'm in !"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
 
   const mainContent = () => {
     return (
@@ -65,48 +76,25 @@ function AddGathering(props) {
               <View style={styles.container}>
                 <View style={styles.inputContainer}>
                   <Text style={styles.title}>
-                    Create a new event:
+                    {gathering.name}
                   </Text>
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeName}
-                    value={name}
-                    placeholder='Event Name'
-                    autoCorrect={false}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeDescription}
-                    value={description}
-                    placeholder='Event Description'
-                  />
+                  <Text>{gathering.description}</Text>
                   <DateTimePicker
-                    testID="dateTimePicker"
                     value={date}
                     mode={'date'}
                     is24Hour={true}
-                    onChange={onChange}
                     accentColor="black"
-                    minimumDate={new Date()}
+                    disabled={true}
                   />
                   <DateTimePicker
-                    testID="dateTimePicker"
                     value={date}
                     mode={'time'}
                     is24Hour={true}
-                    onChange={onChange}
-                    minimumDate={new Date()}
+                    disabled={true}
                   />
                 </View>
-                <TouchableOpacity
-                  style={{...styles.saveButton, backgroundColor: isFormValid ? Colors.brownish : 'gray' }}
-                  onPress={saveGathering}
-                >
-                  <Text style={styles.saveButtonTitle}>
-                    Save Gathering
-                  </Text>
-                </TouchableOpacity>
               </View>
+              <GatheringParticipationButton gathering={gathering} />
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
