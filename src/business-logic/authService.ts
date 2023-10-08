@@ -23,7 +23,7 @@ class AuthService {
             resolve(true);
           })
           .catch(error => {
-            console.error(error);
+            console.log(error);
             const errorMessage = this.getErrorMessage(error.code);
             reject(errorMessage);
           });
@@ -39,7 +39,7 @@ class AuthService {
             resolve();
           })
           .catch(error => {
-            console.error(error);
+            console.log(error);
             const errorMessage = this.getErrorMessage(error.code);
             reject(errorMessage);
           });
@@ -55,7 +55,7 @@ class AuthService {
             resolve(result.user.uid);
           })
           .catch(error => {
-            console.error(error);
+            console.log(error);
             const errorMessage = this.getErrorMessage(error.code);
             reject(errorMessage);
           });

@@ -33,7 +33,7 @@ function Login(props) {
     })
     .catch(errorMessage => {
       Alert.alert('Error during registration', errorMessage, [
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
+        {text: 'OK'},
       ]);
     });
   }
