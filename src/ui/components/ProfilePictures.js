@@ -1,46 +1,56 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
+
 import ProfilePicture from './ProfilePicture';
 
-const ProfilePictures = ({ numPeople }) => {
-  const profiles = [
-    { name: '1', profilePic: 'image1.jpg' },
-    { name: '2', profilePic: 'image2.jpg' },
-    { name: '3', profilePic: 'image3.jpg' },
-    { name: '4', profilePic: 'image3.jpg' },
-    { name: '5', profilePic: 'image3.jpg' },
-  ];
+const ProfilePictures = (props) => {
 
-  // Calculate the number of people not displayed
-  const remainingPeople = Math.abs(4 - profiles.length);
+  const { gatherings } = useSelector(state => state.event);
 
-  const profilePic = (profile, index) => {
-    return (
-      <View
-        key={index}
-        style={[
-          styles.circle,
-          { backgroundColor: 'gray' },
-          { left: -index * 1.8 },
-          { zIndex: -index }
-        ]}
-      >
-        {remainingPeople > 0 && index >= 4 ? (
-          <Text style={styles.text}>+{remainingPeople}</Text>
-         ) : (
-          <View/>
-        )}
-      </View>
-    )
-  }
+  const { index } = props;
 
+  // const profiles = [
+  //   { name: '1', profilePic: 'image1.jpg' },
+  //   { name: '2', profilePic: 'image2.jpg' },
+  //   { name: '3', profilePic: 'image3.jpg' },
+  //   { name: '4', profilePic: 'image3.jpg' },
+  //   { name: '5', profilePic: 'image3.jpg' },
+  // ];
+
+  // // Calculate the number of people not displayed
+  // const remainingPeople = Math.abs(4 - profiles.length);
+
+  // const profilePic = (profile, index) => {
+  //   return (
+  //     <View
+  //       key={index}
+  //       style={[
+  //         styles.circle,
+  //         { backgroundColor: 'gray' },
+  //         { left: -index * 1.8 },
+  //         { zIndex: -index }
+  //       ]}
+  //     >
+  //       {remainingPeople > 0 && index >= 4 ? (
+  //         <Text style={styles.text}>+{remainingPeople}</Text>
+  //        ) : (
+  //         <View/>
+  //       )}
+  //     </View>
+  //   )
+  // }
+
+  // return (
+  //   <View style={styles.container}>
+  //     {profiles.reverse().map((profile, index) => (
+  //       profilePic(profile, index)
+  //     ))}
+  //   </View>
+  // );
   return (
-    <View style={styles.container}>
-      {profiles.reverse().map((profile, index) => (
-        profilePic(profile, index)
-      ))}
-    </View>
-  );
+    <View/>
+  )
 };
 
 const styles = StyleSheet.create({

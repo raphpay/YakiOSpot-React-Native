@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { useSelector } from "react-redux";
 
 import FirestoreService from "../../../business-logic/firestoreService";
 import AuthService from "../../../business-logic/authService";
@@ -14,7 +15,8 @@ import Colors from "../../assets/colors/Colors";
 
 function GatheringCard(props) {
 
-  const { gathering, navigation } = props;
+  const { gatherings } = useSelector(state => state.event);
+  const { index, navigation } = props;
 
   const [ownerName, setOwnerName] = useState("");
   const [currentUserID, setCurrentUserID] = useState("");
@@ -28,24 +30,20 @@ function GatheringCard(props) {
   function compareOwnerIDToCurrentUser() {
     const currentUser = AuthService.shared().currentUser();
     setCurrentUserID(currentUser.uid);
-    setShowParticipationButton(currentUserID !== gathering.ownerID);
+    setShowParticipationButton(currentUserID !== gatherings[index].ownerID);
   }
 
   function goToDetails() {
-    const dateAsString = gathering.date.toISOString();
-    const serializableGathering = {
-      ...gathering,
-      date: dateAsString,
-    }
-    navigation.navigate('GatheringDetails', {
-      gathering: serializableGathering,
-    });
+    navigation.navigate('GatheringDetails', { index: index });
   }
 
   useEffect(() => {
     async function init() {
-      await convertOwnerIDToName(gathering.ownerID);
-      compareOwnerIDToCurrentUser();
+      const gathering = gatherings[index];
+      if (gathering && gathering.ownerID) {
+        await convertOwnerIDToName(gathering.ownerID);
+        compareOwnerIDToCurrentUser();
+      }
     }
     init();
   }, []);
@@ -55,17 +53,17 @@ function GatheringCard(props) {
       <View style={{...styles.container, backgroundColor: Colors.blueish }}>
         <View style={styles.textsContainer}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{gathering.name}</Text>
+            <Text style={styles.title}>{gatherings[index]?.name ?? ''}</Text>
             <PillView text={ownerName} backgroundColor={Colors.greenish}/>
           </View>
           <View style={styles.timeContainer}>
-            <Label icon={require('../../assets/icons/clock.badge.png')} text={Utils.formatDate(gathering.date)}/>
-            <Label icon={require('../../assets/icons/calendar.png')} text={Utils.formatTime(gathering.date)}/>
-            <ProfilePictures />
+            <Label icon={require('../../assets/icons/clock.badge.png')} text={Utils.formatDate(gatherings[index]?.date ?? '')}/>
+            <Label icon={require('../../assets/icons/calendar.png')} text={Utils.formatTime(gatherings[index]?.date ?? '')}/>
+            <ProfilePictures index={index} />
           </View>
         </View>
         { showParticipationButton && (
-          <GatheringParticipationButton gathering={gathering}/>
+          <GatheringParticipationButton index={index} />
         )}
       </View>
     </TouchableWithoutFeedback>

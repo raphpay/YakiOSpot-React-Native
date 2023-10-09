@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
+import { useSelector } from "react-redux";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import AuthService from "../../../business-logic/authService";
@@ -19,14 +20,16 @@ import GatheringParticipationButton from "./GatheringParticipationButton";
 
 function AddGathering(props) {
 
+  const { gatherings } = useSelector(state => state.event);
+
   const { navigation, route } = props;
-  const { gathering } = route.params;
+  const { index } = route.params;
 
   const [showParticipationButton, setShowParticipationButton] = useState(false);
 
   function compareOwnerIDToCurrentUser() {
     const currentUser = AuthService.shared().currentUser();
-    setShowParticipationButton(currentUser.uid !== gathering.ownerID);
+    setShowParticipationButton(currentUser.uid !== gatherings[index]?.ownerID);
   }
 
   useEffect(() => {
@@ -55,11 +58,11 @@ function AddGathering(props) {
               <View style={styles.container}>
                 <View style={styles.inputContainer}>
                   <Text style={styles.title}>
-                    {gathering.name}
+                    {gatherings[index]?.name}
                   </Text>
-                  <Text>{gathering.description}</Text>
+                  <Text>{gatherings[index]?.description}</Text>
                   <DateTimePicker
-                    value={new Date(gathering.date)}
+                    value={new Date(gatherings[index]?.date)}
                     mode={'date'}
                     is24Hour={true}
                     accentColor="black"
@@ -67,7 +70,7 @@ function AddGathering(props) {
                   />
                  
                   <DateTimePicker
-                    value={new Date(gathering.date)}
+                    value={new Date(gatherings[index]?.date)}
                     mode={'time'}
                     is24Hour={true}
                     disabled={true}
@@ -75,9 +78,8 @@ function AddGathering(props) {
                 </View>
               </View>
               { showParticipationButton && (
-                  <GatheringParticipationButton gathering={gathering} />
-                )
-              }
+                <GatheringParticipationButton index={index} />
+              )}
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 import AuthService from "../../../business-logic/authService";
 import FirestoreService from "../../../business-logic/firestoreService";
@@ -8,39 +9,45 @@ import Colors from "../../assets/colors/Colors";
 
 function GatheringParticipationButton(props) {
 
-  const { gathering } = props;
+  const { gatherings } = useSelector(state => state.event);
+  const dispatch = useDispatch();
+
+  const { index } = props;
 
   const [isUserParticipating, setIsUserParticipating] = useState(false);
 
   async function participate() {
     const currentUser = AuthService.shared().currentUser().uid;
+    const gathering = gatherings[index];
     const isOwner = currentUser === gathering.ownerID;
+    var newPeopleUIDs = [];
     if (isUserParticipating && !isOwner) {
       await FirestoreService.shared().addParticipantToGathering(gathering.id, currentUser);
       setIsUserParticipating(true);
+      newPeopleUIDs = [...gathering.peopleUIDs, currentUser];
     } else {
       await FirestoreService.shared().removeParticipantFromGathering(gathering.id, currentUser);
       setIsUserParticipating(false);
+      newPeopleUIDs = gathering.peopleUIDs.filter(uid => uid !== currentUser);
     }
+    const newGathering = {
+      ...gathering,
+      peopleUIDs: newPeopleUIDs,
+    }
+    dispatch({type: 'event/modifyGatheringAtIndex', payload: {index, newGathering}});
   }
-
-  useEffect(() => {
-    const currentUser = AuthService.shared().currentUser().uid;
-    const isUserIn = gathering.peopleUIDs.includes(currentUser);
-    setIsUserParticipating(isUserIn);
-  }, [gathering]);
 
   return (
     <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={participate}
-          style={{...styles.button, backgroundColor: isUserParticipating ? 'red' : Colors.brownish}}
-        >
-          <Text style={styles.buttonText}>
-            {isUserParticipating ? "I can't make it" : "I'm in !"}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        onPress={participate}
+        style={{...styles.button, backgroundColor: isUserParticipating ? 'red' : Colors.brownish}}
+      >
+        <Text style={styles.buttonText}>
+          {isUserParticipating ? "I can't make it" : "I'm in !"}
+        </Text>
+      </TouchableOpacity>
+    </View>
   )
 }
 

@@ -7,6 +7,7 @@ import {
   Text,
   View
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 import FirestoreService from "../../../business-logic/firestoreService";
 
@@ -21,7 +22,9 @@ function Main(props) {
 
   const { navigation } = props;
 
-  const [gatherings, setGatherings] = useState([]);
+  const { gatherings } = useSelector(state => state.event);
+  const dispatch = useDispatch();
+
   const [refreshing, setRefreshing] = useState(false);
 
   function goToAddGathering() {
@@ -42,7 +45,7 @@ function Main(props) {
 
   async function readGatherings() {
     const firestoreGatherings = await FirestoreService.shared().readGatherings();
-    setGatherings(firestoreGatherings);
+    dispatch({type: 'event/setGatherings', payload: firestoreGatherings});
   }
 
   useEffect(() => {
@@ -87,11 +90,11 @@ function Main(props) {
   const eventList = () => {
     return (
       <View>
-        {gatherings.map(gathering => {
+        {gatherings.map((gathering, index) => {
           return (
-            <GatheringCard
-              key={gathering.id}
-              gathering={gathering}
+            <GatheringCard 
+              key={index}
+              index={index}
               navigation={navigation}
             />
           )
@@ -127,7 +130,7 @@ function Main(props) {
         </View>
       </SafeAreaView>
     )
-  }
+  } 
 
   return (
     <BackgroundImage
