@@ -14,7 +14,8 @@ function GatheringParticipationButton(props) {
 
   async function participate() {
     const currentUser = AuthService.shared().currentUser().uid;
-    if (isUserParticipating) {
+    const isOwner = currentUser === gathering.ownerID;
+    if (isUserParticipating && !isOwner) {
       await FirestoreService.shared().addParticipantToGathering(gathering.id, currentUser);
       setIsUserParticipating(true);
     } else {
